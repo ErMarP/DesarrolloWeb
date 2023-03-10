@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.customer.api.dto.ApiResponse;
 import com.customer.api.entity.Category;
 import com.customer.api.service.SvcCategory;
+import com.customer.exception.ApiException;
 
 @RestController
 @RequestMapping("/category")
@@ -38,27 +40,23 @@ public class CtrlCategory {
 	}
 	
 	@PostMapping
-	public ResponseEntity<String> createCategory(@Valid @RequestBody Category category, BindingResult binding){
-		String message = "";
+	public ResponseEntity<ApiResponse> createCategory(@Valid @RequestBody Category category, BindingResult binding){
 		if (binding.hasErrors()) {
-			message = binding.getAllErrors().get(0).getDefaultMessage();
-			return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+			throw new ApiException(HttpStatus.BAD_REQUEST, binding.getAllErrors().get(0).getDefaultMessage());
 		}
 		return new ResponseEntity<>(svc.createCategory(category), HttpStatus.OK);
 	}
 	
 	@PutMapping("/{category_id}")
-	public ResponseEntity<String> updateCategory(@PathVariable int category_id, @Valid @RequestBody Category category, BindingResult binding){
-		String message = "";
+	public ResponseEntity<ApiResponse> updateCategory(@PathVariable int category_id, @Valid @RequestBody Category category, BindingResult binding){
 		if (binding.hasErrors()) {
-			message = binding.getAllErrors().get(0).getDefaultMessage();
-			return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+			throw new ApiException(HttpStatus.BAD_REQUEST, binding.getAllErrors().get(0).getDefaultMessage());
 		}
 		return new ResponseEntity<>(svc.updateCategory(category_id, category), HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/{category_id}")
-	public ResponseEntity<String> deleteCategory(@PathVariable int category_id){
+	public ResponseEntity<ApiResponse> deleteCategory(@PathVariable int category_id){
 		return new ResponseEntity<>(svc.deleteCategory(category_id), HttpStatus.OK);
 	}
 
